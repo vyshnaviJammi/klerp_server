@@ -1,12 +1,9 @@
 const express = require('express');
-const { addTimetableEntry, getTimetableEntries, getTimetableEntryById, updateTimetableEntry, deleteTimetableEntry } = require('../controllers/timetableController');
-
 const router = express.Router();
+const timetableController = require('../controllers/timetableController');
+const authenticateJWT = require('../middleware/authenticateJWT');
 
-router.post('/', addTimetableEntry);
-router.get('/', getTimetableEntries);
-router.get('/:id', getTimetableEntryById);
-router.put('/:id', updateTimetableEntry);
-router.delete('/:id', deleteTimetableEntry);
+router.get('/', authenticateJWT, timetableController.getAllTimetables);
+router.post('/', authenticateJWT, timetableController.createTimetable);
 
 module.exports = router;

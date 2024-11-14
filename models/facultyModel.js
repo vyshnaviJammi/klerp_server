@@ -6,4 +6,6 @@ const facultySchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true }
 });
 
-module.exports = mongoose.model('Faculty', facultySchema);
+const Faculty = mongoose.model('Faculty', facultySchema);
+
+module.exports = Faculty;

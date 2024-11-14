@@ -1,50 +1,23 @@
-const Faculty = require('../models/Faculty');
+const Faculty = require('../models/facultyModel');
 
-const addFaculty = async (req, res) => {
+exports.getAllFaculty = async (req, res) => {
+    try {
+        const faculty = await Faculty.find();
+        res.json(faculty);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.createFaculty = async (req, res) => {
     const { name, department, email } = req.body;
+
+    const faculty = new Faculty({ name, department, email });
+
     try {
-        const faculty = new Faculty({ name, department, email });
-        await faculty.save();
-        res.status(201).json(faculty);
+        const savedFaculty = await faculty.save();
+        res.status(201).json(savedFaculty);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ error: error.message });
     }
 };
-
-const getFacultyMembers = async (req, res) => {
-    try {
-        const facultyMembers = await Faculty.find();
-        res.status(200).json(facultyMembers);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-const getFacultyById = async (req, res) => {
-    try {
-        const faculty = await Faculty.findById(req.params.id);
-        res.status(200).json(faculty);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-const updateFaculty = async (req, res) => {
-    try {
-        const faculty = await Faculty.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.status(200).json(faculty);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-const deleteFaculty = async (req, res) => {
-    try {
-        await Faculty.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: 'Faculty deleted successfully' });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-module.exports = { addFaculty, getFacultyMembers, getFacultyById, updateFaculty, deleteFaculty };

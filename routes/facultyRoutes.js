@@ -1,12 +1,9 @@
 const express = require('express');
-const { addFaculty, getFacultyMembers, getFacultyById, updateFaculty, deleteFaculty } = require('../controllers/facultyController');
-
 const router = express.Router();
+const facultyController = require('../controllers/facultyController');
+const authenticateJWT = require('../middleware/authenticateJWT');
 
-router.post('/', addFaculty);
-router.get('/', getFacultyMembers);
-router.get('/:id', getFacultyById);
-router.put('/:id', updateFaculty);
-router.delete('/:id', deleteFaculty);
+router.get('/', authenticateJWT, facultyController.getAllFaculty);
+router.post('/', authenticateJWT, facultyController.createFaculty);
 
 module.exports = router;

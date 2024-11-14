@@ -1,25 +1,43 @@
-require("dotenv").config();
-const express =require("express");
-const app=express();
-const cors =require("cors");
-const connection =require("./db");
-const userRoutes =require('./routes/users');
-const authRoutes =require('./routes/auth');
+const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
-//database connection
-connection()
+const userRoutes = require('./routes/authRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const facultyRoutes = require('./routes/facultyRoutes');
+const courseRoutes = require('./routes/courseRoutes');
+const timetableRoutes = require('./routes/timetableRoutes');
 
-//middlewares
-app.use(express.json())
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT ;  // Default port
+
+// Connect to MongoDB using MONGO_URI from .env
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => {
+    console.log('Connected to MongoDB');
+}).catch((error) => {
+    console.error('Error connecting to MongoDB', error);
+});
+
+// Middleware
 app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
+// Routes
+app.use('/api/auth', userRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/faculty', facultyRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/timetables', timetableRoutes);
 
-//routes
-app.use("/api/users", userRoutes);
-app.use("/api/auth", authRoutes);
-
-
-
-const port =process.env.PORT||5000;
-app.listen(port,()=>console.log(`Server running on port${PORT}.....`));
- 
+// Start the server
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});

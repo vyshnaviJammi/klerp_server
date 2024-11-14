@@ -1,50 +1,23 @@
-const Timetable = require('../models/Timetable');
+const Timetable = require('../models/timetableModel');
 
-const addTimetableEntry = async (req, res) => {
-    const { courseCode, day, time, location } = req.body;
+exports.getAllTimetables = async (req, res) => {
     try {
-        const timetableEntry = new Timetable({ courseCode, day, time, location });
-        await timetableEntry.save();
-        res.status(201).json(timetableEntry);
+        const timetables = await Timetable.find();
+        res.json(timetables);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
-const getTimetableEntries = async (req, res) => {
+exports.createTimetable = async (req, res) => {
+    const { day, period1, period2, period3, period4 } = req.body;
+
+    const timetable = new Timetable({ day, period1, period2, period3, period4 });
+
     try {
-        const timetableEntries = await Timetable.find();
-        res.status(200).json(timetableEntries);
+        const savedTimetable = await timetable.save();
+        res.status(201).json(savedTimetable);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ error: error.message });
     }
 };
-
-const getTimetableEntryById = async (req, res) => {
-    try {
-        const timetableEntry = await Timetable.findById(req.params.id);
-        res.status(200).json(timetableEntry);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-const updateTimetableEntry = async (req, res) => {
-    try {
-        const timetableEntry = await Timetable.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.status(200).json(timetableEntry);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-const deleteTimetableEntry = async (req, res) => {
-    try {
-        await Timetable.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: 'Timetable entry deleted successfully' });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-module.exports = { addTimetableEntry, getTimetableEntries, getTimetableEntryById, updateTimetableEntry, deleteTimetableEntry };
